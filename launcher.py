@@ -1,8 +1,10 @@
+import macao
+
 GAME_NAME = "Macao"
 SAVES_PATH = "saved_games/"
 
 
-class MainMenu():
+class MainMenu:
     def main(self):
         self.print_menu()
         users_selection = users_selection_validation()
@@ -35,7 +37,8 @@ class MainMenu():
         pass
 
     def new_game(self):
-        pass
+        number_of_players = int(input("Please provide the number of players for this game: "))
+        macao.main(number_of_players)
 
     def saved_games(self):
         SavesMenu().main()
@@ -44,7 +47,7 @@ class MainMenu():
         print(f"\nQuiting {GAME_NAME}...")
 
 
-class SavesMenu():
+class SavesMenu:
     def main(self):
         self.print_menu()
         users_selection = users_selection_validation()
@@ -64,7 +67,7 @@ class SavesMenu():
         MainMenu().main()
 
 
-class DeletionMenu():
+class DeletionMenu:
     def main(self):
         self.print_menu()
         users_selection = users_selection_validation()
