@@ -9,9 +9,12 @@ main_deck = cards.generate_deck()
 def main(num_of_players):
     game_ended = False
 
+
     # players_decks - lista list kart każdego z graczy
     # pcs_deck - lista kart komputera
     # used_cards_ids - lista indeksów kart wyjętych z głównej talii
+
+    #Possibility to choose the number of players
     players_decks, pcs_deck, used_cards_ids, = draw_decks_per_the_num_of_players(num_of_players)
 
     while not game_ended:
