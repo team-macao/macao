@@ -88,9 +88,9 @@ class DeletionMenu:
 
 
 def users_selection_validation():
-    users_selection = input("\nYour selection: ")
+    users_selection = None
     try:
-        users_selection = int(users_selection)
+        users_selection = int(input("\nYour selection: "))
     except ValueError:
         print("You must input a number!")
         users_selection_validation()
