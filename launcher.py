@@ -95,6 +95,7 @@ def users_selection_validation():
             print("You must input a number!")
             continue
         return users_selection
+ 
 
 
 if __name__ == '__main__':
