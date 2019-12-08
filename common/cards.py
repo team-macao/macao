@@ -10,7 +10,6 @@ class Card(object):
     def __str__(self):
         return self.rank + " of " + self.suit
 
-
     def __repr__(self):
         return self.rank + " of " + self.suit
 
@@ -79,7 +78,7 @@ class Two(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
 
-        
+
 def generate_all_cards():
     deck = []
 
@@ -104,6 +103,7 @@ def generate_all_cards():
             raise Exception
 
     return deck
+
 
 def generate_cards_per_suit(suit):
     temp_deck = []
