@@ -2,62 +2,53 @@ import random
 
 from common import cards
 
-main_deck = cards.Deck()
+
+class Deck:
+    def __init__(self):
+        self.cards = cards.generate_all_cards()
+
+
+class Game:
+    def __init__(self):
+        self.game_ended = False
+        self.main_deck = Deck()
+        self.deck = Deck()
+        self.players = []
+
+    def start_game(self):
+        def get_num_of_players():
+            while True:
+                try:
+                    num_of_players = int(input("Input the number of players for this game: "))
+                except ValueError:
+                    print("You must input a number!")
+                else:
+                    return num_of_players
+
+        num_of_players = get_num_of_players()
+        for num in range(1, num_of_players):
+            self.players.append(Player(num))
+        for player in self.players:
+            player.draw_hand(self.deck)
+        self._current_game(self.deck)
+
+    def _current_game(self, deck):
+        while not self.game_ended:
+            print(f"\nCard on table: ")
+            for player in self.players:
+                print(f"\nPlayer #{player.players_id}\n")
+                print("Cards on you hand:")
+                for card in player.hand:
+                    print(repr(card))
+                users_selection = input("\nChoose a card to be put on the table: ")
 
 
 class Player:
-    def __init__(self):
-        pass
+    def __init__(self, players_id):
+        self.hand = []
+        self.players_id = players_id
 
-
-def start_game(num_of_players):
-    game_ended = False
-
-    # players_decks - list of lists of class objects of cards of each of players
-    players_decks, used_cards_ids, = draw_decks_per_the_num_of_players(num_of_players)
-
-    while not game_ended:
-        print(f"\nCard on table: {repr(main_deck.cards[used_cards_ids[-1]])}")
-        for player_id in range(num_of_players):
-            print(f"\nPlayer #{player_id + 1}")
-            print("Cards on you hand:")
-            try:
-                cards_id = 0
-                for card in players_decks[player_id]:
-                    cards_id += 1
-                    print(f"{cards_id}. {repr(card)}")
-            except Exception:
-                pass
-
-            try:
-                players_move = input("\nPlease select which card to be put on the table: ")
-            except Exception:
-                pass
-
-
-def draw_decks_per_the_num_of_players(num_of_players):
-    used_cards_ids = []
-    players_decks = []
-    for num in range(num_of_players):
-        temp_players_deck, used_cards_ids = draw_deck(used_cards_ids)
-        players_decks.append(temp_players_deck)
-
-    return players_decks, used_cards_ids
-
-
-def draw_deck(used_cards_ids):
-    players_deck = []
-    counter = 0
-
-    temp_used_cards_ids = used_cards_ids
-
-    while counter < 5:
-        cards_id = random.randint(0, 51)
-        if cards_id not in temp_used_cards_ids:
-            counter += 1
-            temp_used_cards_ids.append(cards_id)
-            players_deck.append(main_deck.cards[cards_id])
-        else:
-            continue
-
-    return players_deck, temp_used_cards_ids
+    def draw_hand(self, deck):
+        for card in range(1, 5):
+            self.hand.append(deck.cards[random.randint(0, len(deck.cards))])
+        return self.hand
