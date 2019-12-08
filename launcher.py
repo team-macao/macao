@@ -6,11 +6,11 @@ SAVES_PATH = "saved_games/"
 
 class MainMenu:
     def main(self):
-        self.print_menu()
+        self._print_menu()
         users_selection = users_selection_validation()
         self.select_valid(users_selection)
 
-    def print_menu(self):
+    def _print_menu(self):
         print(f"\n{GAME_NAME}\n")
         print("1. Continue last game")
         print("2. New game")
@@ -38,7 +38,7 @@ class MainMenu:
 
     def new_game(self):
         number_of_players = int(input("Please provide the number of players for this game: "))
-        macao.main(number_of_players)
+        macao.start_game(number_of_players)
 
     def saved_games(self):
         SavesMenu().main()
@@ -93,9 +93,8 @@ def users_selection_validation():
             users_selection = int(input("\nYour selection: "))
         except ValueError:
             print("You must input a number!")
-            continue
-        return users_selection
- 
+        else:
+            return users_selection
 
 
 if __name__ == '__main__':
