@@ -8,7 +8,7 @@ class MainMenu:
     def main(self):
         self._print_menu()
         users_selection = users_selection_validation()
-        self.select_valid(users_selection)
+        self.select_valid_game_options(users_selection)
 
     def _print_menu(self):
         print(f"\n{GAME_NAME}\n")
@@ -17,7 +17,7 @@ class MainMenu:
         print("3. Saved games")
         print("4. Exit game")
 
-    def select_valid(self, users_selection):
+    def select_valid_game_options(self, users_selection):
         if users_selection <= 0 or users_selection >= 5:
             self.invalid_selection()
         elif users_selection == 1:
