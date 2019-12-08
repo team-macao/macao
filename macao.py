@@ -1,26 +1,25 @@
-import copy
 import random
 
 from common import cards
 
-main_deck = cards.generate_deck()
+main_deck = cards.Deck()
+
+
+class Player:
+    def __init__(self):
+        pass
 
 
 def main(num_of_players):
     game_ended = False
 
-
-    # players_decks - lista list kart każdego z graczy
-    # pcs_deck - lista kart komputera
-    # used_cards_ids - lista indeksów kart wyjętych z głównej talii
-
-    #Possibility to choose the number of players
-    players_decks, pcs_deck, used_cards_ids, = draw_decks_per_the_num_of_players(num_of_players)
+    # players_decks - list of lists of class objects of cards of each of players
+    players_decks, used_cards_ids, = draw_decks_per_the_num_of_players(num_of_players)
 
     while not game_ended:
-        print(f"\nCard on table: {repr(main_deck[used_cards_ids[-1]])}")
+        print(f"\nCard on table: {repr(main_deck.cards[used_cards_ids[-1]])}")
         for player_id in range(num_of_players):
-            print(f"\nPlayer #{player_id+1}")
+            print(f"\nPlayer #{player_id + 1}")
             print("Cards on you hand:")
             try:
                 cards_id = 0
@@ -42,9 +41,8 @@ def draw_decks_per_the_num_of_players(num_of_players):
     for num in range(num_of_players):
         temp_players_deck, used_cards_ids = draw_deck(used_cards_ids)
         players_decks.append(temp_players_deck)
-    pcs_deck, used_cards_ids = draw_deck(used_cards_ids)
 
-    return players_decks, pcs_deck, used_cards_ids
+    return players_decks, used_cards_ids
 
 
 def draw_deck(used_cards_ids):
@@ -58,7 +56,7 @@ def draw_deck(used_cards_ids):
         if cards_id not in temp_used_cards_ids:
             counter += 1
             temp_used_cards_ids.append(cards_id)
-            players_deck.append(main_deck[cards_id])
+            players_deck.append(main_deck.cards[cards_id])
         else:
             continue
 
