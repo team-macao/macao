@@ -49,6 +49,6 @@ class Player:
         self.players_id = players_id
 
     def draw_hand(self, deck):
-        for card in range(1, 5):
-            self.hand.append(deck.cards[random.randint(0, len(deck.cards))])
+        for card in range(5):
+            self.hand.append(deck.cards.pop(random.randint(0, len(deck.cards))))
         return self.hand
