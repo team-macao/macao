@@ -8,7 +8,8 @@ class Card(object):
         self.rank = rank
 
     def __str__(self):
-        pass
+        return self.rank + " of " + self.suit
+
 
     def __repr__(self):
         return self.rank + " of " + self.suit
