@@ -10,7 +10,7 @@ class Player:
         pass
 
 
-def main(num_of_players):
+def start_game(num_of_players):
     game_ended = False
 
     # players_decks - list of lists of class objects of cards of each of players
