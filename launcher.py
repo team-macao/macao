@@ -88,13 +88,13 @@ class DeletionMenu:
 
 
 def users_selection_validation():
-    users_selection = None
-    try:
-        users_selection = int(input("\nYour selection: "))
-    except ValueError:
-        print("You must input a number!")
-        users_selection_validation()
-    return users_selection
+    while True:
+        try:
+            users_selection = int(input("\nYour selection: "))
+        except ValueError:
+            print("You must input a number!")
+            continue
+        return users_selection
 
 
 if __name__ == '__main__':
