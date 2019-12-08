@@ -3,7 +3,7 @@ import launcher
 
 def test_print_menu(capsys):
     obj = launcher.MainMenu()
-    obj.print_menu()
+    obj._print_menu()
     captured = capsys.readouterr()
     pattern = '\nMacao\n\n' \
               '1. Continue last game\n' \
@@ -12,8 +12,7 @@ def test_print_menu(capsys):
               '4. Exit game\n'
     assert captured.out == pattern
 
-def test_select_valid_game_options():
-    obj = launcher.MainMenu()
+
 
 
 

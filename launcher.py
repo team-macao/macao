@@ -46,46 +46,6 @@ class MainMenu:
         print(f"\nQuiting {GAME_NAME}...")
 
 
-class SavesMenu:
-    def main(self):
-        self.print_menu()
-        users_selection = users_selection_validation()
-        self.select_valid(users_selection)
-
-    def print_menu(self):
-        pass
-
-    def select_valid(self, users_selection):
-        pass
-
-    def invalid_selection(self):
-        print("\nInvalid selection!")
-        SavesMenu().main()
-
-    def return_to_main_menu(self):
-        MainMenu().main()
-
-
-class DeletionMenu:
-    def main(self):
-        self.print_menu()
-        users_selection = users_selection_validation()
-        self.select_valid(users_selection)
-
-    def print_menu(self):
-        pass
-
-    def select_valid(self, users_selection):
-        pass
-
-    def invalid_selection(self):
-        print("\nInvalid selection!")
-        SavesMenu().main()
-
-    def return_to_main_menu(self):
-        MainMenu().main()
-
-
 def users_selection_validation():
     while True:
         try:
