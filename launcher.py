@@ -37,8 +37,7 @@ class MainMenu:
         pass
 
     def new_game(self):
-        number_of_players = int(input("Please provide the number of players for this game: "))
-        macao.start_game(number_of_players)
+        macao.Game().start_game()
 
     def saved_games(self):
         SavesMenu().main()
