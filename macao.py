@@ -26,7 +26,7 @@ class Game:
                     return num_of_players
 
         num_of_players = get_num_of_players()
-        for num in range(1, num_of_players):
+        for num in range(1, num_of_players + 1):
             self.players.append(Player(num))
         for player in self.players:
             player.draw_hand(self.deck)
