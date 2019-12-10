@@ -6,57 +6,73 @@ from common import cards
 class Deck:
     def __init__(self):
         self.pool = cards.generate_all_cards()
-        self.table = []
 
 
 class Game:
-    def __init__(self):
-        self.game_ended = False
-        self.main_deck = Deck()
+    def __init__(self, num_of_players):
         self.deck = Deck()
+        self.game_ended = False
+        self.num_of_players = num_of_players
         self.players = []
+        self.table = []
 
-    def start_game(self):
-        def get_num_of_players():
-            while True:
-                try:
-                    num_of_players = int(input("Input the number of players for this game: "))
-                except ValueError:
-                    print("You must input a number!")
-                else:
-                    return num_of_players
-
-        def put_first_card_from_pool_on_table(pool, table):
-            table.append(pool.pop(random.randint(0, len(pool) - 1)))
-
-        num_of_players = get_num_of_players()
-        for num in range(1, num_of_players + 1):
+        # generate players (class instances) for number of players inputted
+        for num in range(1, self.num_of_players + 1):
             self.players.append(Player(num))
+
+        # for each player, draw 5 inital cards to hand
         for player in self.players:
-            player.draw_hand(self.deck)
+            player.draw_initial_hand(self.deck)
 
+        # lay out the first card on the table
+        self.table.append(self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1)))
 
-        # putting first card on table:
-        put_first_card_from_pool_on_table(self.deck.pool, self.deck.table)
+        # start the game
+        self._main()
 
-        self._current_game(self.deck)
-
-    def put_card_from_user_to_table(player, card_index, table):
-        table.append(player.hand.pop(card_index - 1))
-
-    def _current_game(self, deck):
+    def _main(self):
+        round_index = 0
+        # iterate until game ends
         while not self.game_ended:
+            round_index += 1
+            # iterate over each of players
             for player in self.players:
-                print(f"\nPlayer #{player.players_id}\n")
+                # print information for the user
+                print(f"\nRound #{round_index}: Player #{player.players_id}")
                 print(f"\nCard on table:")
-                print(f"{self.deck.table[len(self.deck.table) - 1]}\n")
+                print(f"{self.table[len(self.table) - 1]}\n")
                 print("Cards on you hand:")
-                count = 1
+
+                card_index = 0
+                # iterate over cards in player's hand
                 for card in player.hand:
-                    print(f"{count}. {repr(card)}")
-                    count += 1
-                users_selection = int(input("\nChoose a card to be put on the table: "))
-                self.deck.table.append(player.hand.pop(users_selection-1))
+                    card_index += 1
+                    print(f"{card_index}. {repr(card)}")
+                # set flag "users_selection_valid" to False
+                users_selection_valid = False
+                # iterate until got a valid user's selection
+                while not users_selection_valid:
+                    # get user's selection
+                    users_selection = input("\nChoose a card to be put on the table: ")
+                    # check if user entered a number
+                    try:
+                        users_selection_int = int(users_selection)
+                    # if unsuccessful, inform user to enter a number instead
+                    except ValueError:
+                        # inform user to input a number
+                        print("Invalid input! Try entering a number instead")
+                    # check if selected card index is correct
+                    else:
+                        # if user selected a "out-of-range" index
+                        if users_selection_int not in range(1, card_index + 1):
+                            # inform user to input a valid number
+                            print("Invalid selection! Selected number out of range!")
+                        # if user selected correctly
+                        else:
+                            # lay out selected card from user's hand on the table
+                            self.table.append(player.hand.pop(users_selection_int - 1))
+                            # set flag "users_selection_valid" to True
+                            users_selection_valid = True
 
 
 class Player:
@@ -64,7 +80,13 @@ class Player:
         self.hand = []
         self.players_id = players_id
 
-    def draw_hand(self, deck):
+    def draw_initial_hand(self, deck):
         for card in range(5):
-            self.hand.append(deck.pool.pop(random.randint(0, len(deck.pool)-1)))
+            self.hand.append(deck.pool.pop(random.randint(0, len(deck.pool) - 1)))
         return self.hand
+
+    def draw_a_card(self):
+        pass
+
+    def lay_out_card(self, cards_index, player, table):
+        table.append(player.hand.pop(cards_index - 1))
