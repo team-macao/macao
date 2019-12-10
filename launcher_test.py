@@ -6,10 +6,9 @@ def test_print_menu(capsys):
     obj._print_menu()
     captured = capsys.readouterr()
     pattern = '\nMacao\n\n' \
-              '1. Continue last game\n' \
+              '1. Continue the last game\n' \
               '2. New game\n' \
-              '3. Saved games\n' \
-              '4. Exit game\n'
+              '3. Exit game\n'
     assert captured.out == pattern
 
 
