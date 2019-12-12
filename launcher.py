@@ -22,7 +22,7 @@ class MainMenu:
 
     def _print_menu(self):
         print(f"\n{GAME_NAME}\n")
-        print("1. Continue the last game")
+        print("1. Continue last game")
         print("2. New game")
         print("3. Exit game\n")
 
@@ -56,12 +56,12 @@ def new_game():
     def get_num_of_players():
         while True:
             try:
-                num_of_players = int(input("Input the number of players for this game: "))
+                num_of_players = int(input("Enter number of players for this game: "))
             except ValueError:
                 print("\nInvalid input! Try entering a number instead")
             else:
                 if num_of_players not in range(2, 5):
-                    print("\nInvalid selection! Selected number out of range!")
+                    print("\nInvalid selection! Number of players must be between 2 to 4 players!")
                 else:
                     return num_of_players
 
