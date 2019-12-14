@@ -8,6 +8,14 @@ class Deck:
     def __init__(self):
         self.pool = cards.generate_cards()
 
+def validate_card(table_card, player_card):
+    return any(
+        (table_card.rank == "Queen",
+         player_card.rank == "Queen",
+         table_card.rank == player_card.rank,
+         table_card.suit == player_card.suit,
+         )
+    )
 
 class Game:
     def __init__(self, num_of_players):
@@ -26,10 +34,16 @@ class Game:
             player.draw_initial_hand(self.deck)
 
         # lay out the first card on the table
-        self.table.append(self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1)))
+        correct_table = False
+        while correct_table == False:
+            self.table.append(self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1)))
+            if not self.table[len(self.table) - 1].rank in ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two"):
+                correct_table = True
 
         # start the game
         self._main()
+
+
 
     def _main(self):
         round_index = 0
@@ -68,16 +82,26 @@ class Game:
                             print("Invalid input! Try entering a number instead")
                     # check if selected card index is correct
                     else:
-                        # if user selected a "out-of-range" index
-                        if users_selection_int not in range(1, card_index + 1):
-                            # inform user to enter a valid number
-                            print("Invalid selection! Selected number out of range!")
-                        # if user selected correctly
-                        else:
-                            # lay out selected card from user's hand on the table
-                            self.table.append(player.hand.pop(users_selection_int - 1))
-                            # set flag "users_selection_is_valid" to True
-                            users_selection_is_valid = True
+                        validation_rule = False
+                        while validation_rule == False:
+                            # if user selected a "out-of-range" index
+                            if users_selection_int not in range(1, card_index + 1):
+                                # inform user to enter a valid number
+                                print("Invalid selection! Selected number out of range!")
+                            # if user selected correctly
+                            validation_rule = validate_card(self.table[len(self.table) - 1], player.hand[users_selection_int - 1])
+                            if validation_rule == True:
+                                # lay out selected card from user's hand on the table
+                                self.table.append(player.hand.pop(users_selection_int - 1))
+                                # set flag "users_selection_is_valid" to True
+                                users_selection_is_valid = True
+                            else:
+                                print("You cannot use this card due to macao rules!")
+                                users_selection = input("\nChoose a card to be put on table: ")
+
+
+
+
 
 
 class Player:
