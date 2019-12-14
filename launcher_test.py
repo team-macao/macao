@@ -8,7 +8,7 @@ def test_print_menu(capsys):
     pattern = '\nMacao\n\n' \
               '1. Continue last game\n' \
               '2. New game\n' \
-              '3. Exit game\n'
+              '3. Exit game\n\n'
     assert captured.out == pattern
 
 
