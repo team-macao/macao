@@ -1,5 +1,6 @@
 import random
 
+import launcher
 from common import cards
 
 
@@ -53,14 +54,18 @@ class Game:
                 # iterate until got a valid user's selection
                 while not users_selection_is_valid:
                     # get user's selection
+                    print('Q - Quit\n')
                     users_selection = input("\nChoose a card to be put on table: ")
                     # check if user entered a number
                     try:
                         users_selection_int = int(users_selection)
                     # if unsuccessful, inform user to enter a number instead
                     except ValueError:
-                        # inform user to enter a number
-                        print("Invalid input! Try entering a number instead")
+                        if users_selection.upper() == 'Q':
+                            launcher.quit()
+                        else:
+                            # inform user to enter a number
+                            print("Invalid input! Try entering a number instead")
                     # check if selected card index is correct
                     else:
                         # if user selected a "out-of-range" index

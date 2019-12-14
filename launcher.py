@@ -1,3 +1,5 @@
+import sys
+
 import macao
 
 GAME_NAME = "Macao"
@@ -72,6 +74,7 @@ def new_game():
 
 def quit():
     print(f"\nQuiting {GAME_NAME}...")
+    sys.exit(0)
 
 
 if __name__ == '__main__':
