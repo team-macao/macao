@@ -13,7 +13,7 @@ class Card():
     def __repr__(self):
         return self.rank + " of " + self.suit
 
-    def act(self, *args, **kwargs):
+    def act(self):
         return False, None
 
 
@@ -22,7 +22,7 @@ class Ace(Card):
         super().__init__(suit, rank)
         self.is_active = True
 
-    def act(self, *args, **kwargs):
+    def act(self, **kwargs):
         action = ("demand", kwargs["suit"])
         return True, action
 
@@ -32,11 +32,11 @@ class King(Card):
         super().__init__(suit, rank)
         self.is_active = True
 
-    def act(self, *args, **kwargs):
-        if kwargs["suit"] == SUITS[1]:
+    def act(self):
+        if self.suit == SUITS[0]:
             action = ("attack", 5, "forwards")
             return True, action
-        elif kwargs["suit"] == SUITS[4]:
+        elif self.suit == SUITS[3]:
             action = ("attack", 5, "backwards")
             return True, action
         else:
@@ -48,7 +48,7 @@ class Queen(Card):
         super().__init__(suit, rank)
         self.is_active = True
 
-    def act(self, *args, **kwargs):
+    def act(self):
         if self.suit == SUITS[0] or SUITS[3]:
             action = ("negate")
             return True, action
@@ -61,7 +61,7 @@ class Jack(Card):
         super().__init__(suit, rank)
         self.is_active = True
 
-    def act(self, *args, **kwargs):
+    def act(self, **kwargs):
         action = ("demand", kwargs["rank"])
         return True, action
 
@@ -101,7 +101,7 @@ class Four(Card):
         super().__init__(suit, rank)
         self.is_active = True
 
-    def act(self, *args, **kwargs):
+    def act(self):
         action = ("stop")
         return True, action
 
@@ -111,7 +111,7 @@ class Three(Card):
         super().__init__(suit, rank)
         self.is_active = True
 
-    def act(self, *args, **kwargs):
+    def act(self):
         action = ("attack", 3, "forwards")
         return True, action
 
@@ -121,7 +121,7 @@ class Two(Card):
         super().__init__(suit, rank)
         self.is_active = True
 
-    def act(self, *args, **kwargs):
+    def act(self):
         action = ("attack", 2, "forwards")
         return True, action
 
