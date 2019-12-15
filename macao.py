@@ -8,14 +8,6 @@ class Deck:
     def __init__(self):
         self.pool = cards.generate_cards()
 
-def validate_card(table_card, player_card):
-    return any(
-        (table_card.rank == "Queen",
-         player_card.rank == "Queen",
-         table_card.rank == player_card.rank,
-         table_card.suit == player_card.suit,
-         )
-    )
 
 class Game:
     def __init__(self, num_of_players):
@@ -34,18 +26,18 @@ class Game:
             player.draw_initial_hand(self.deck)
 
         # lay out the first card on the table
+        # self.table.append(self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1)))
         correct_table = False
-        while correct_table == False:
-            if len(self.table) == 0:
-                self.table.append(self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1)))
-            if not self.table[len(self.table) - 1].rank in ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two"):
+        while not correct_table:
+            drawn_card = self.deck.pop(random.randint(0, len(self.deck.pool) - 1))
+            if drawn_card in ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two"):
+                self.deck.append(card_to_be_drawn)
+            else:
+                self.table.append(drawn_card)
                 correct_table = True
-                self.table.append(self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1)))
 
         # start the game
         self._main()
-
-
 
     def _main(self):
         round_index = 0
@@ -67,9 +59,9 @@ class Game:
                     print(f"{card_index}. {repr(card)}")
                 # set flag "users_selection_is_valid" to False
                 users_selection_is_valid = False
-                validation_rule = False
+                is_compliant_with_rules = False
                 # iterate until got a valid user's selection
-                while not (users_selection_is_valid and validation_rule):
+                while not (users_selection_is_valid and is_compliant_with_rules):
                     # get user's selection
                     print('Q - Quit\n')
                     users_selection = input("\nChoose a card to be put on table: ")
@@ -89,8 +81,9 @@ class Game:
                         # inform user to enter a valid number
                         print("Invalid selection! Selected number out of range!")
                     # if user selected correctly
-                    validation_rule = validate_card(self.table[len(self.table) - 1], player.hand[users_selection_int - 1])
-                    if validation_rule:
+                    is_compliant_with_rules = validate_card(self.table[len(self.table) - 1],
+                                                    player.hand[users_selection_int - 1])
+                    if is_compliant_with_rules:
                         # lay out selected card from user's hand on the table
                         self.table.append(player.hand.pop(users_selection_int - 1))
                         # set flag "users_selection_is_valid" to True
@@ -98,10 +91,6 @@ class Game:
                     else:
                         print("You cannot use this card due to macao rules!")
                         # users_selection = input("\nChoose a card to be put on table: ")
-
-
-
-
 
 
 class Player:
@@ -119,3 +108,14 @@ class Player:
 
     def lay_out_card(self, cards_index, player, table):
         table.append(player.hand.pop(cards_index - 1))
+
+
+def validate_card(table_card, player_card):
+    return any(
+        (table_card.rank == "Queen",
+         player_card.rank == "Queen",
+         table_card.rank == player_card.rank,
+         table_card.suit == player_card.suit,
+         )
+    )
+
