@@ -1,5 +1,3 @@
-ACTIVE_CARDS = ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two")
-INACTIVE_CARDS = ("Ten", "Nine", "Eight", "Seven", "Six", "Five")
 RANKS = ("Ace", "King", "Queen", "Jack", "Ten", "Nine", "Eight", "Seven", "Six", "Five", "Four", "Three", "Two")
 SUITS = ("Hearts", "Diamonds", "Clubs", "Spades",)
 
@@ -23,21 +21,20 @@ class Ace(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
 
-    def act(self, **kwargs):
+    def act(self, *args, **kwargs):
         action = ("demand", kwargs["suit"])
         return True, action
-
 
 
 class King(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
 
-    def act(self):
-        if self.suit == SUITS[1]:
+    def act(self, *args, **kwargs):
+        if kwargs["suit"] == SUITS[1]:
             action = ("attack", 5, "forwards")
             return True, action
-        elif self.suit == SUITS[4]:
+        elif kwargs["suit"] == SUITS[4]:
             action = ("attack", 5, "backwards")
             return True, action
         else:
@@ -48,10 +45,21 @@ class Queen(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
 
+    def act(self, *args, **kwargs):
+        if self.suit == SUITS[0] or SUITS[3]:
+            action = ("negate")
+            return True, action
+        else:
+            return False, None
+
 
 class Jack(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+
+    def act(self, *args, **kwargs):
+        action = ("demand", kwargs["rank"])
+        return True, action
 
 
 class Ten(Card):
@@ -88,15 +96,27 @@ class Four(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
 
+    def act(self, *args, **kwargs):
+        action = ("stop")
+        return True, action
+
 
 class Three(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
 
+    def act(self, *args, **kwargs):
+        action = ("attack", 3, "forwards")
+        return True, action
+
 
 class Two(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+
+    def act(self, *args, **kwargs):
+        action = ("attack", 2, "forwards")
+        return True, action
 
 
 def generate_cards():
