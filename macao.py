@@ -29,7 +29,7 @@ class Game:
         # self.table.append(self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1)))
         correct_table = False
         while not correct_table:
-            drawn_card = self.deck.pop(random.randint(0, len(self.deck.pool) - 1))
+            drawn_card = self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1))
             if drawn_card in ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two"):
                 self.deck.append(card_to_be_drawn)
             else:
