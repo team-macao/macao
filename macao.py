@@ -31,7 +31,7 @@ class Game:
         while not correct_table:
             drawn_card = self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1))
             if drawn_card in ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two"):
-                self.deck.append(card_to_be_drawn)
+                self.deck.append(drawn_card)
             else:
                 self.table.append(drawn_card)
                 correct_table = True
@@ -82,7 +82,7 @@ class Game:
                         print("Invalid selection! Selected number out of range!")
                     # if user selected correctly
                     is_compliant_with_rules = validate_card(self.table[len(self.table) - 1],
-                                                    player.hand[users_selection_int - 1])
+                                                            player.hand[users_selection_int - 1])
                     if is_compliant_with_rules:
                         # lay out selected card from user's hand on the table
                         self.table.append(player.hand.pop(users_selection_int - 1))
