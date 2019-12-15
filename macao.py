@@ -10,18 +10,22 @@ class Game:
         self.is_action_underway = False
         self.is_game_over = False
         self.num_of_players = num_of_players
+        self.other_selections = ["D", "Q", "S"]
         self.players = []
         self.table = []
-        self.other_selections = {"D": self.
-                                 "Q": self.quit
-                                 }
+
         for id in range(1, self.num_of_players + 1):
             self.players.append(Player(id))
 
         for player in self.players:
             player.draw_initial_hand(self.deck)
 
-        self.table.append(self.deck.pop(random.randint(0, len(self.deck) - 1)))
+        is_first_card_correct = False
+        while not is_first_card_correct:
+            random_card = self.deck.pop(random.randint(0, len(self.deck) - 1))
+            if random_card.rank in cards.INACTIVE_CARDS:
+                is_first_card_correct = True
+                self.table.append(random_card)
 
         self._main()
 
@@ -36,9 +40,15 @@ class Game:
                 print("Cards on you hand:")
                 for card_index, card in enumerate(player.hand):
                     print(f"{card_index + 1}. {repr(card)}")
-                users_selection = get_users_selection()
-                valid_users_selection = validate_users_selection(users_selection, player.hand, self.other_selections)
-
+                is_players_move_valid = False
+                while not is_players_move_valid:
+                    users_selection = get_users_selection()
+                    valid_selection = validate_users_selection(users_selection, player.hand, self.other_selections)
+                    is_players_move_valid = validate_players_move(player.hand, valid_selection, self.table)
+                    if is_players_move_valid:
+                        self.table.append(player.hand.pop(valid_selection - 1))
+                    else:
+                        print("Not possible to lay out this card due to Macao rules!")
 
 class Player:
     def __init__(self, players_id):
@@ -58,7 +68,9 @@ class Player:
 
 
 def get_users_selection():
-    users_selection = input("\nEnter your selection: ")
+    print("\n\"D\" - Draw, \"Q\" - Quit, \"S\" - Save")
+    users_selection = input("Enter your selection: ")
+    return users_selection
 
 
 def validate_users_selection(users_selection, players_hand, other_selections):
@@ -67,10 +79,21 @@ def validate_users_selection(users_selection, players_hand, other_selections):
         try:
             int_users_selection = int(users_selection)
         except ValueError:
-            print("Invalid input! Try entering a number instead")
-
+            if users_selection in other_selections:
+                is_users_selection_valid = True
+            else:
+                print("Invalid input!")
         else:
             if int_users_selection not in range(1, len(players_hand) + 2):
                 print("Invalid selection! Selected number out of range!")
             else:
-                is_users_selection_valid = True
+                return int_users_selection
+
+
+def validate_players_move(players_hand, users_selection, table):
+    results = []
+    results.append(table[-1].rank == players_hand[users_selection - 1].rank)
+    results.append(table[-1].suit == players_hand[users_selection - 1].suit)
+    results.append(table[-1].rank == "Queen")
+    results.append(players_hand[users_selection - 1].rank == "Queen")
+    return any(results)

@@ -1,3 +1,5 @@
+ACTIVE_CARDS = ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two")
+INACTIVE_CARDS = ("Ten", "Nine", "Eight", "Seven", "Six", "Five")
 RANKS = ("Ace", "King", "Queen", "Jack", "Ten", "Nine", "Eight", "Seven", "Six", "Five", "Four", "Three", "Two")
 SUITS = ("Hearts", "Diamonds", "Clubs", "Spades",)
 

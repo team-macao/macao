@@ -10,8 +10,7 @@ class MainMenu:
     def __init__(self):
         self.menu_options = {1: continue_last_game,
                              2: new_game,
-                             3: quit,
-                             }
+                             3: quit, }
 
     def main(self):
         self._print_menu()
@@ -57,7 +56,7 @@ def new_game():
     def get_num_of_players():
         while True:
             try:
-                num_of_players = int(input("Enter number of players for this game: "))
+                num_of_players = int(input("\nEnter number of players for this game: "))
             except ValueError:
                 print("\nInvalid input! Try entering a number instead")
             else:
