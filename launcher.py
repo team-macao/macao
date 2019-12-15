@@ -70,7 +70,7 @@ def new_game():
     macao.Game(num_of_players)
 
 
-def quit():
+def quit(*args):
     print(f"\nQuiting {GAME_NAME}...")
     sys.exit(0)
 
