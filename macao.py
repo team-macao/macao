@@ -17,6 +17,7 @@ class Game:
         self.players = []
         self.table = []
 
+
         # generate players (class instances) for number of players entered
         for num in range(1, self.num_of_players + 1):
             self.players.append(Player(num))
@@ -62,24 +63,26 @@ class Game:
                 is_compliant_with_rules = False
                 # iterate until got a valid user's selection
                 while not (users_selection_is_valid and is_compliant_with_rules):
+                    # print('\nIf you want draw card press "D"') #************************************************
+                    print('\nQ - Quit\n')
                     # get user's selection
-                    print('Q - Quit\n')
-                    users_selection = input("\nChoose a card to be put on table: ")
-                    # check if user entered a number
-                    try:
-                        users_selection_int = int(users_selection)
-                    # if unsuccessful, inform user to enter a number instead
-                    except ValueError:
-                        if users_selection.upper() == 'Q':
-                            launcher.quit()
+                    users_selection = input("\nChoose a card to be put on table or draw card press 'D': ")
+                    if not users_selection.isdigit():
+                       self.control(users_selection, player, self.deck)
+                       break
+                    else:
+                        # check if user entered a number
+                        try:
+                            users_selection_int = int(users_selection)
+                        # if unsuccessful, inform user to enter a number instead
+                        except ValueError:
+                                # inform user to enter a number
+                                print("Invalid input! Try entering a number instead")
+                        # check if selected card index is correct
                         else:
-                            # inform user to enter a number
-                            print("Invalid input! Try entering a number instead")
-                    # check if selected card index is correct
-                    # if user selected a "out-of-range" index
-                    if users_selection_int not in range(1, card_index + 1):
-                        # inform user to enter a valid number
-                        print("Invalid selection! Selected number out of range!")
+                            if users_selection_int not in range(1, card_index + 1):
+                                # inform user to enter a valid number
+                                print("Invalid selection! Selected number out of range!")
                     # if user selected correctly
                     is_compliant_with_rules = validate_card(self.table[len(self.table) - 1],
                                                             player.hand[users_selection_int - 1])
@@ -92,6 +95,17 @@ class Game:
                         print("You cannot use this card due to macao rules!")
                         # users_selection = input("\nChoose a card to be put on table: ")
 
+    def control(self, users_selection, player, deck):
+        control_switches = {
+            'Q': launcher.quit,
+            'D': player.draw_card,
+        }
+        control_switches[users_selection.upper()](deck)
+
+    def show_draw_card(self):
+        print(player.hand[-1])
+        pass
+
 
 class Player:
     def __init__(self, players_id):
@@ -103,8 +117,8 @@ class Player:
             self.hand.append(deck.pool.pop(random.randint(0, len(deck.pool) - 1)))
         return self.hand
 
-    def draw_card(self):
-        pass
+    def draw_card(self, deck):
+        self.hand.append(deck.pool.pop(random.randint(0, len(deck.pool) - 1)))
 
     def lay_out_card(self, cards_index, player, table):
         table.append(player.hand.pop(cards_index - 1))
