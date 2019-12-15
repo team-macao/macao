@@ -4,51 +4,81 @@ import launcher
 from common import cards
 
 
+class Deck:
+    def __init__(self):
+        self.pool = cards.generate_cards()
+
+
 class Game:
     def __init__(self, num_of_players):
-        self.deck = cards.generate_cards()
-        self.is_action_underway = False
-        self.is_game_over = False
+        self.deck = Deck()
+        self.game_ended = False
         self.num_of_players = num_of_players
-        self.other_selections = ["D", "Q", "S"]
         self.players = []
         self.table = []
 
-        for id in range(1, self.num_of_players + 1):
-            self.players.append(Player(id))
+        # generate players (class instances) for number of players entered
+        for num in range(1, self.num_of_players + 1):
+            self.players.append(Player(num))
 
+        # for each player, draw 5 initial cards to hand
         for player in self.players:
             player.draw_initial_hand(self.deck)
 
-        is_first_card_correct = False
-        while not is_first_card_correct:
-            random_card = self.deck.pop(random.randint(0, len(self.deck) - 1))
-            if random_card.rank in cards.INACTIVE_CARDS:
-                is_first_card_correct = True
-                self.table.append(random_card)
+        # lay out the first card on the table
+        self.table.append(self.deck.pool.pop(random.randint(0, len(self.deck.pool) - 1)))
 
+        # start the game
         self._main()
 
     def _main(self):
         round_index = 0
-        while not self.is_game_over:
+        # iterate until game ends
+        while not self.game_ended:
             round_index += 1
+            # iterate over each of players
             for player in self.players:
+                # print information for the user
                 print(f"\nRound #{round_index}: Player #{player.players_id}")
                 print(f"\nCard on table:")
-                print(f"{self.table[- 1]}\n")
+                print(f"{self.table[len(self.table) - 1]}\n")
                 print("Cards on you hand:")
-                for card_index, card in enumerate(player.hand):
-                    print(f"{card_index + 1}. {repr(card)}")
-                is_players_move_valid = False
-                while not is_players_move_valid:
-                    users_selection = get_users_selection()
-                    valid_selection = validate_users_selection(users_selection, player.hand, self.other_selections)
-                    is_players_move_valid = validate_players_move(player.hand, valid_selection, self.table)
-                    if is_players_move_valid:
-                        self.table.append(player.hand.pop(valid_selection - 1))
+
+                card_index = 0
+                # iterate over cards in player's hand
+                for card in player.hand:
+                    card_index += 1
+                    print(f"{card_index}. {repr(card)}")
+                # set flag "users_selection_is_valid" to False
+                users_selection_is_valid = False
+                # iterate until got a valid user's selection
+                while not users_selection_is_valid:
+                    # get user's selection
+                    print('Q - Quit\n')
+                    users_selection = input("\nChoose a card to be put on table: ")
+                    # check if user entered a number
+                    try:
+                        users_selection_int = int(users_selection)
+                    # if unsuccessful, inform user to enter a number instead
+                    except ValueError:
+                        if users_selection.upper() == 'Q':
+                            launcher.quit()
+                        else:
+                            # inform user to enter a number
+                            print("Invalid input! Try entering a number instead")
+                    # check if selected card index is correct
                     else:
-                        print("Not possible to lay out this card due to Macao rules!")
+                        # if user selected a "out-of-range" index
+                        if users_selection_int not in range(1, card_index + 1):
+                            # inform user to enter a valid number
+                            print("Invalid selection! Selected number out of range!")
+                        # if user selected correctly
+                        else:
+                            # lay out selected card from user's hand on the table
+                            self.table.append(player.hand.pop(users_selection_int - 1))
+                            # set flag "users_selection_is_valid" to True
+                            users_selection_is_valid = True
+
 
 class Player:
     def __init__(self, players_id):
@@ -57,7 +87,7 @@ class Player:
 
     def draw_initial_hand(self, deck):
         for card in range(5):
-            self.hand.append(deck.pop(random.randint(0, len(deck) - 1)))
+            self.hand.append(deck.pool.pop(random.randint(0, len(deck.pool) - 1)))
         return self.hand
 
     def draw_card(self):
@@ -65,35 +95,3 @@ class Player:
 
     def lay_out_card(self, cards_index, player, table):
         table.append(player.hand.pop(cards_index - 1))
-
-
-def get_users_selection():
-    print("\n\"D\" - Draw, \"Q\" - Quit, \"S\" - Save")
-    users_selection = input("Enter your selection: ")
-    return users_selection
-
-
-def validate_users_selection(users_selection, players_hand, other_selections):
-    is_users_selection_valid = False
-    while not is_users_selection_valid:
-        try:
-            int_users_selection = int(users_selection)
-        except ValueError:
-            if users_selection in other_selections:
-                is_users_selection_valid = True
-            else:
-                print("Invalid input!")
-        else:
-            if int_users_selection not in range(1, len(players_hand) + 2):
-                print("Invalid selection! Selected number out of range!")
-            else:
-                return int_users_selection
-
-
-def validate_players_move(players_hand, users_selection, table):
-    results = []
-    results.append(table[-1].rank == players_hand[users_selection - 1].rank)
-    results.append(table[-1].suit == players_hand[users_selection - 1].suit)
-    results.append(table[-1].rank == "Queen")
-    results.append(players_hand[users_selection - 1].rank == "Queen")
-    return any(results)

@@ -20,6 +20,7 @@ class Card():
 class Ace(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+        self.is_active = True
 
     def act(self, *args, **kwargs):
         action = ("demand", kwargs["suit"])
@@ -29,6 +30,7 @@ class Ace(Card):
 class King(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+        self.is_active = True
 
     def act(self, *args, **kwargs):
         if kwargs["suit"] == SUITS[1]:
@@ -44,6 +46,7 @@ class King(Card):
 class Queen(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+        self.is_active = True
 
     def act(self, *args, **kwargs):
         if self.suit == SUITS[0] or SUITS[3]:
@@ -56,6 +59,7 @@ class Queen(Card):
 class Jack(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+        self.is_active = True
 
     def act(self, *args, **kwargs):
         action = ("demand", kwargs["rank"])
@@ -95,6 +99,7 @@ class Five(Card):
 class Four(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+        self.is_active = True
 
     def act(self, *args, **kwargs):
         action = ("stop")
@@ -104,6 +109,7 @@ class Four(Card):
 class Three(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+        self.is_active = True
 
     def act(self, *args, **kwargs):
         action = ("attack", 3, "forwards")
@@ -113,6 +119,7 @@ class Three(Card):
 class Two(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+        self.is_active = True
 
     def act(self, *args, **kwargs):
         action = ("attack", 2, "forwards")
