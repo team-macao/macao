@@ -1,9 +1,18 @@
+ACTIONS = {"A": "Attack",
+           "C": "Change",
+           "D": "Demand",
+           "N": "Negate",
+           "S": "Stop"}
+
 RANKS = ("Ace", "King", "Queen", "Jack", "Ten", "Nine", "Eight", "Seven", "Six", "Five", "Four", "Three", "Two")
 SUITS = ("Hearts", "Diamonds", "Clubs", "Spades",)
 
 
+
 class Card():
     def __init__(self, rank, suit):
+        self.action = None
+        self.is_active = False
         self.rank = rank
         self.suit = suit
 
@@ -14,56 +23,43 @@ class Card():
         return self.rank + " of " + self.suit
 
     def act(self):
-        return False, None
+        return self.action
 
 
 class Ace(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
-        self.is_active = True
 
-    def act(self, **kwargs):
-        action = ("demand", kwargs["suit"])
-        return True, action
+        self.is_active = True
+        self.action = ACTIONS["C"]
 
 
 class King(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+
         self.is_active = True
 
-    def act(self):
-        if self.suit == SUITS[0]:
-            action = ("attack", 5, "forwards")
-            return True, action
-        elif self.suit == SUITS[3]:
-            action = ("attack", 5, "backwards")
-            return True, action
-        else:
-            return False, None
+        if suit == SUITS[0] or SUITS[3]:
+            self.action = ACTIONS["A"]
 
 
 class Queen(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
+
         self.is_active = True
 
-    def act(self):
-        if self.suit == SUITS[0] or SUITS[3]:
-            action = ("negate")
-            return True, action
-        else:
-            return False, None
+        if suit == SUITS[0] or SUITS[3]:
+            self.action = ACTIONS["N"]
 
 
 class Jack(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
-        self.is_active = True
 
-    def act(self, **kwargs):
-        action = ("demand", kwargs["rank"])
-        return True, action
+        self.is_active = True
+        self.action = ACTIONS["D"]
 
 
 class Ten(Card):
@@ -99,31 +95,25 @@ class Five(Card):
 class Four(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
-        self.is_active = True
 
-    def act(self):
-        action = ("stop")
-        return True, action
+        self.is_active = True
+        self.action = ACTIONS["S"]
 
 
 class Three(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
-        self.is_active = True
 
-    def act(self):
-        action = ("attack", 3, "forwards")
-        return True, action
+        self.is_active = True
+        self.action = ACTIONS["A"]
 
 
 class Two(Card):
     def __init__(self, suit, rank):
         super().__init__(suit, rank)
-        self.is_active = True
 
-    def act(self):
-        action = ("attack", 2, "forwards")
-        return True, action
+        self.is_active = True
+        self.action = ACTIONS["A"]
 
 
 def generate_cards():
