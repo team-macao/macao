@@ -20,27 +20,30 @@ def print_menu():
 
 
 def get_valid_users_selection():
-    def validate_users_selection(users_selection):
-        try:
-            users_selection_int = int(users_selection)
-        except ValueError:
-            print("\nInvalid input! Try entering a number instead")
-            return False, None
-        else:
-            if users_selection_int not in range(1, 4):
-                print("\nInvalid selection! Possible number of users playing between 2 to 4!")
-                return False, None
-            else:
-                valid_users_selection = users_selection_int
-                return True, valid_users_selection
-
     is_users_selection_valid = False
     valid_users_selection = None
 
     while not is_users_selection_valid:
-        users_selection = input("Enter a valid number for your selection: ")
+        users_selection = input("Enter a valid number from menu for your selection: ")
         is_users_selection_valid, valid_users_selection = validate_users_selection(users_selection)
     return valid_users_selection
+
+
+def validate_users_selection(users_selection):
+    validated_users_selection = None
+    is_users_selection_valid = False
+    try:
+        users_selection_int = int(users_selection)
+    except ValueError:
+        print("Invalid input! Try entering a number instead\n")
+    else:
+        if users_selection_int not in range(1, 4):
+            print("Invalid selection! Possible selections between 1 to 3!\n")
+        else:
+            validated_users_selection = users_selection_int
+            is_users_selection_valid = True
+
+    return is_users_selection_valid, validated_users_selection
 
 
 def select_valid_menu_option(valid_users_selection):
@@ -61,10 +64,10 @@ def new_game():
             try:
                 num_of_players = int(input("\nEnter number of players for this game: "))
             except ValueError:
-                print("\nInvalid input! Try entering a number instead")
+                print("Invalid input! Try entering a number instead!\n")
             else:
                 if num_of_players not in range(2, 5):
-                    print("\nInvalid selection! Number of players must be between 2 to 4 players!")
+                    print("Invalid selection! Number of players must be between 2 to 4 players!")
                 else:
                     return num_of_players
 
