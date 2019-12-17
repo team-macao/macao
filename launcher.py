@@ -6,36 +6,23 @@ GAME_NAME = "Macao"
 SAVES_PATH = "saved_games/"
 
 
-class MainMenu:
-    def __init__(self):
-        self.menu_options = {1: continue_last_game,
-                             2: new_game,
-                             3: quit, }
+def main():
+    print_menu()
+    valid_users_selection = get_valid_users_selection()
+    select_valid_menu_option(valid_users_selection)
 
-    def main(self):
-        self._print_menu()
-        self.is_users_selection_valid = False
-        while not self.is_users_selection_valid:
-            self.users_selection = self.get_users_selection()
-            self.is_users_selection_valid, self.valid_users_selection = self.validate_users_selection()
-        self._select_valid_menu_option()
 
-    def _print_menu(self):
-        print(f"\n{GAME_NAME}\n")
-        print("1. Continue last game")
-        print("2. New game")
-        print("3. Exit game\n")
+def print_menu():
+    print(f"\n{GAME_NAME}\n")
+    print("1. Continue last game")
+    print("2. New game")
+    print("3. Quit\n")
 
-    def _select_valid_menu_option(self):
-        self.menu_options[self.valid_users_selection]()
 
-    def get_users_selection(self):
-        users_selection = input("Enter a valid number for your selection: ")
-        return users_selection
-
-    def validate_users_selection(self):
+def get_valid_users_selection():
+    def validate_users_selection(users_selection):
         try:
-            users_selection_int = int(self.users_selection)
+            users_selection_int = int(users_selection)
         except ValueError:
             print("\nInvalid input! Try entering a number instead")
             return False, None
@@ -46,6 +33,22 @@ class MainMenu:
             else:
                 valid_users_selection = users_selection_int
                 return True, valid_users_selection
+
+    is_users_selection_valid = False
+    valid_users_selection = None
+
+    while not is_users_selection_valid:
+        users_selection = input("Enter a valid number for your selection: ")
+        is_users_selection_valid, valid_users_selection = validate_users_selection(users_selection)
+    return valid_users_selection
+
+
+def select_valid_menu_option(valid_users_selection):
+    menu_options = {1: continue_last_game,
+                    2: new_game,
+                    3: quit_program, }
+
+    menu_options[valid_users_selection]()
 
 
 def continue_last_game():
@@ -70,10 +73,10 @@ def new_game():
     macao.Game(num_of_players)
 
 
-def quit(*args):
+def quit_program(*args):
     print(f"\nQuiting {GAME_NAME}...")
     sys.exit(0)
 
 
 if __name__ == '__main__':
-    MainMenu().main()
+    main()

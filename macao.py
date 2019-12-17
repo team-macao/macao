@@ -97,7 +97,7 @@ class Game:
 
     def control(self, users_selection, player, deck):
         control_switches = {
-            'Q': launcher.quit,
+            'Q': launcher.quit_program,
             'D': player.draw_card,
         }
         control_switches[users_selection.upper()](deck)
