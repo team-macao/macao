@@ -4,9 +4,6 @@ import launcher
 from common import cards
 
 
-
-
-
 class Game:
     def __init__(self, num_of_players):
         self.deck = cards.generate_cards()
@@ -49,6 +46,7 @@ class Game:
         while not self.game_ended:
             self.round_index += 1
             for player in self.players:
+                control.check_skip(player)
                 print_current_game_status(self, player)
                 users_selection_is_valid = False
                 is_compliant_with_rules = False
@@ -91,11 +89,18 @@ class Game:
         print(player.hand[-1])
         pass
 
+class control():
+    @staticmethod
+    def check_skip(player):
+        if player.skip == 0:
+            player.is_skip = False
 
 class Player:
     def __init__(self, players_id):
         self.hand = []
         self.players_id = players_id
+        self.is_skip = False
+        self.skip = 0
 
     def draw_initial_hand(self, deck):
         for card in range(5):
