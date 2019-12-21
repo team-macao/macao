@@ -55,6 +55,7 @@ class Game:
                     users_selection = input("\nChoose a card to be put on table or draw card press 'D': ")
                     if not users_selection.isdigit():
                         self.control(users_selection, player, self.deck)
+                        self.put_drawn_card_on_table_or_not(users_selection, player)
                         break
                     else:
                         try:
@@ -84,6 +85,13 @@ class Game:
             'D': player.draw_card,
         }
         control_switches[users_selection.upper()](deck)
+
+    def put_drawn_card_on_table_or_not(self, users_selection, player):
+        if users_selection.upper() == 'D':
+            users_decision = input(f'Drawn card: {player.hand[-1]}, '
+                                   f'put this card on the table? Y/N:').upper()
+            if users_decision == 'Y':
+                self.table.append(player.hand.pop(-1))
 
     def show_draw_card(self):
         print(player.hand[-1])
