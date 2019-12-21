@@ -54,6 +54,7 @@ class Game:
                     print('\nQ - Quit\n')
                     users_selection = input("\nChoose a card to be put on table or draw card press 'D': ")
                     if not users_selection.isdigit():
+                        self.rebuild_cards_deck()
                         self.control(users_selection, player, self.deck)
                         self.put_drawn_card_on_table_or_not(users_selection, player)
                         break
@@ -86,6 +87,7 @@ class Game:
         }
         control_switches[users_selection.upper()](deck)
 
+
     def put_drawn_card_on_table_or_not(self, users_selection, player):
         if users_selection.upper() == 'D':
             users_decision = input(f'Drawn card: {player.hand[-1]}, '
@@ -93,15 +95,25 @@ class Game:
             if users_decision == 'Y':
                 self.table.append(player.hand.pop(-1))
 
+    def rebuild_cards_deck(self):
+        if not self.deck:
+            self.deck = self.table[:-1]
+            _ = self.table[-1]
+            self.table.clear()
+            self.table.append(_)
+
+
     def show_draw_card(self):
         print(player.hand[-1])
         pass
+
 
 class control():
     @staticmethod
     def check_skip(player):
         if player.skip == 0:
             player.is_skip = False
+
 
 class Player:
     def __init__(self, players_id):
