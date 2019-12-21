@@ -10,8 +10,7 @@ RANKS = ("Ace", "King", "Queen", "Jack", "Ten", "Nine", "Eight", "Seven", "Six",
 SUITS = ("Hearts", "Diamonds", "Clubs", "Spades",)
 
 
-
-class Card(abc.ABC):
+class Card():
     def __init__(self, rank, suit):
         self.action = None
         self.is_active = False
@@ -24,7 +23,6 @@ class Card(abc.ABC):
     def __repr__(self):
         return self.rank + " of " + self.suit
 
-    @abc.abstractmethod
     def act(self):
         return self.action
 
