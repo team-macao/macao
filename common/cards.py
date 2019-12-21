@@ -1,3 +1,5 @@
+import abc
+
 ACTIONS = {"A": "Attack",
            "C": "Change",
            "D": "Demand",
@@ -9,7 +11,7 @@ SUITS = ("Hearts", "Diamonds", "Clubs", "Spades",)
 
 
 
-class Card():
+class Card(abc.ABC):
     def __init__(self, rank, suit):
         self.action = None
         self.is_active = False
@@ -22,6 +24,7 @@ class Card():
     def __repr__(self):
         return self.rank + " of " + self.suit
 
+    @abc.abstractmethod
     def act(self):
         return self.action
 
@@ -31,7 +34,6 @@ class Ace(Card):
         super().__init__(suit, rank)
 
         self.is_active = True
-        self.action = ACTIONS["C"]
 
 
 class King(Card):
