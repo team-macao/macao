@@ -27,7 +27,7 @@ class Game:
         correct_table = False
         while not correct_table:
             drawn_card = self.deck.pop(random.randint(0, len(self.deck) - 1))
-            if drawn_card in ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two"):
+            if drawn_card.rank in ("Ace", "King", "Queen", "Jack", "Four", "Three", "Two"):
                 self.deck.append(drawn_card)
             else:
                 self.table.append(drawn_card)
