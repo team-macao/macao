@@ -55,8 +55,8 @@ class Game:
                     users_selection = input("\nChoose a card to be put on table or draw card press 'D': ")
                     if not users_selection.isdigit():
                         self.rebuild_cards_deck()
-                        self.control(users_selection, player, self.deck)
-                        self.put_drawn_card_on_table_or_not(users_selection, player)
+                        self.control(users_selection, player, self.table, self.deck)
+                        # self.put_drawn_card_on_table_or_not(users_selection, player)
                         break
                     else:
                         try:
@@ -80,20 +80,12 @@ class Game:
     def validate_users_selection(self):
         pass
 
-    def control(self, users_selection, player, deck):
+    def control(self, users_selection, player=None, table=None, deck=None):
         control_switches = {
             'Q': launcher.quit_program,
-            'D': player.draw_card,
+            'D': player.draw_card_by_decision(table, deck),
         }
-        control_switches[users_selection.upper()](deck)
-
-
-    def put_drawn_card_on_table_or_not(self, users_selection, player):
-        if users_selection.upper() == 'D':
-            users_decision = input(f'Drawn card: {player.hand[-1]}, '
-                                   f'put this card on the table? Y/N:').upper()
-            if users_decision == 'Y':
-                self.table.append(player.hand.pop(-1))
+        control_switches[users_selection.upper()]
 
     def rebuild_cards_deck(self):
         if not self.deck:
@@ -129,6 +121,20 @@ class Player:
 
     def draw_card(self, deck):
         self.hand.append(deck.pop(random.randint(0, len(deck) - 1)))
+
+    def draw_card_by_decision(self, table, deck):
+        self.draw_card(deck)
+        users_decision = input(f'Drawn card: {self.hand[-1]}, '
+                               f'put this card on the table? Y/N:').upper()
+        if users_decision == 'Y':
+            table.append(self.hand.pop(-1))
+
+    # def put_drawn_card_on_table_or_not(self, users_selection, player):
+    #     if users_selection.upper() == 'D':
+    #         users_decision = input(f'Drawn card: {player.hand[-1]}, '
+    #                                f'put this card on the table? Y/N:').upper()
+    #         if users_decision == 'Y':
+    #             self.table.append(player.hand.pop(-1))
 
     def lay_out_card(self, cards_index, player, table):
         table.append(player.hand.pop(cards_index - 1))
