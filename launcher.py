@@ -59,24 +59,24 @@ def continue_last_game():
 
 
 def new_game():
-    def get_num_of_players():
-        while True:
-            try:
-                num_of_players = int(input("\nEnter number of players for this game: "))
-            except ValueError:
-                print("Invalid input! Try entering a number instead!\n")
-            else:
-                if num_of_players not in range(2, 5):
-                    print("Invalid selection! Number of players must be between 2 to 4 players!")
-                else:
-                    return num_of_players
-
     num_of_players = get_num_of_players()
-
     macao.Game(num_of_players)
 
 
-def quit_program(*args):
+def get_num_of_players():
+    while True:
+        try:
+            num_of_players = int(input("\nEnter number of players for this game: "))
+        except ValueError:
+            print("Invalid input! Try entering a number instead!\n")
+        else:
+            if num_of_players not in range(2, 5):
+                print("Invalid selection! Number of players must be between 2 to 4 players!")
+            else:
+                return num_of_players
+
+
+def quit_program():
     print(f"\nQuiting {GAME_NAME}...")
     sys.exit(0)
 
