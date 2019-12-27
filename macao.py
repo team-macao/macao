@@ -82,10 +82,10 @@ class Game:
 
     def control(self, users_selection, player=None, table=None, deck=None):
         control_switches = {
-            'Q': launcher.quit_program,
+            'Q': launcher.quit_program(),
             'D': player.draw_card_by_decision(table, deck),
         }
-        control_switches[users_selection.upper()]()
+        control_switches[users_selection.upper()]
 
 
     def rebuild_deck(self):
