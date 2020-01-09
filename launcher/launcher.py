@@ -6,10 +6,11 @@ GAME_NAME = "Macao"
 SAVES_PATH = "saved_games/"
 
 
-def main():
+def launch():
     print_menu()
     valid_users_selection = get_valid_users_selection()
     select_valid_menu_option(valid_users_selection)
+    return result
 
 
 def print_menu():
@@ -55,31 +56,15 @@ def select_valid_menu_option(valid_users_selection):
 
 
 def continue_last_game():
-    pass
+    global result
+    result = "continue"
 
 
 def new_game():
-    num_of_players = get_num_of_players()
-    macao.Game(num_of_players)
-
-
-def get_num_of_players():
-    while True:
-        try:
-            num_of_players = int(input("\nEnter number of players for this game: "))
-        except ValueError:
-            print("Invalid input! Try entering a number instead!\n")
-        else:
-            if num_of_players not in range(2, 5):
-                print("Invalid selection! Number of players must be between 2 to 4 players!")
-            else:
-                return num_of_players
+    global result
+    result = "new"
 
 
 def quit_program():
     print(f"\nQuiting {GAME_NAME}...")
     sys.exit(0)
-
-
-if __name__ == '__main__':
-    main()
