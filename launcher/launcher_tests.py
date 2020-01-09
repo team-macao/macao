@@ -1,4 +1,4 @@
-import launcher
+from launcher import launcher
 
 
 def test_print_menu(capsys):
