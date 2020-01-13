@@ -1,23 +1,9 @@
 import sys
 
-import macao
 
-GAME_NAME = "Macao"
-SAVES_PATH = "saved_games/"
-
-
-def launch():
-    print_menu()
-    valid_users_selection = get_valid_users_selection()
-    select_valid_menu_option(valid_users_selection)
-    return result
-
-
-def print_menu():
-    print(f"\n{GAME_NAME}\n")
-    print("1. Continue last game")
-    print("2. New game")
-    print("3. Quit\n")
+def continue_last_game(*args):
+    global result
+    result = "continue"
 
 
 def get_valid_users_selection():
@@ -28,6 +14,46 @@ def get_valid_users_selection():
         users_selection = input("Enter a valid number from menu for your selection: ")
         is_users_selection_valid, valid_users_selection = validate_users_selection(users_selection)
     return valid_users_selection
+
+
+def launch(**kwargs):
+    set_global_variables(**kwargs)
+    main()
+
+    return result
+
+
+def main():
+    print_menu()
+    valid_users_selection = get_valid_users_selection()
+    select_valid_menu_option(valid_users_selection)
+
+
+def new_game(*args):
+    global result
+    result = "new"
+
+
+def print_menu():
+    print(f"\n{GAMES_NAME}\n")
+    print("1. Continue last game")
+    print("2. New game")
+    print("3. Quit\n")
+
+
+def select_valid_menu_option(valid_users_selection):
+    menu_options = {1: continue_last_game,
+                    2: new_game,
+                    3: sys.exit,
+                    }
+
+    menu_options[valid_users_selection](0)
+
+
+def set_global_variables(**kwargs):
+    global GAMES_NAME, SAVES_PATH
+    GAMES_NAME = kwargs["games_name"]
+    SAVES_PATH = kwargs["saves_path"]
 
 
 def validate_users_selection(users_selection):
@@ -45,26 +71,3 @@ def validate_users_selection(users_selection):
             is_users_selection_valid = True
 
     return is_users_selection_valid, validated_users_selection
-
-
-def select_valid_menu_option(valid_users_selection):
-    menu_options = {1: continue_last_game,
-                    2: new_game,
-                    3: quit_program, }
-
-    menu_options[valid_users_selection]()
-
-
-def continue_last_game():
-    global result
-    result = "continue"
-
-
-def new_game():
-    global result
-    result = "new"
-
-
-def quit_program():
-    print(f"\nQuiting {GAME_NAME}...")
-    sys.exit(0)

@@ -1,15 +1,12 @@
 import random
+import sys
 
 from launcher import launcher
 from common import cards
 from common.errors import *
 
-
-# class Control():
-#     @staticmethod
-#     def check_skip(player):
-#         if player.skip == 0:
-#             player.is_skip = False
+GAMES_NAME = "Macao"
+SAVES_PATH = "saved_games/"
 
 
 class GameData:
@@ -24,7 +21,7 @@ class GameData:
     def _loaded_game_init(self, loaded_game_data):
         self.game_ended = loaded_game_data["game_ended"]
         self.deck = loaded_game_data["game_ended"]
-        self.num_of_player = loaded_game_data["num_of_players"]
+        self.num_of_players = loaded_game_data["num_of_players"]
         self.round_index = loaded_game_data["round_index"]
         self.players = loaded_game_data["players"]
         self.table = loaded_game_data["table"]
@@ -32,11 +29,9 @@ class GameData:
     def _new_game_init(self):
         self.game_ended = False
         self.deck = cards.generate_cards()
-        self.num_of_players = self.get_num_of_players()
-        self.players = []
         self.round_index = 0
-        self.table = []
 
+        self.get_num_of_players()
         self.set_up_list_of_instances_of_players()
         self.set_up_table()
 
@@ -44,8 +39,7 @@ class GameData:
         if len(self.table) == 0:
             self.rebuild_deck()
 
-    @staticmethod
-    def get_num_of_players():
+    def get_num_of_players(self):
         while True:
             try:
                 num_of_players = int(input("\nEnter number of players for this game: "))
@@ -55,32 +49,9 @@ class GameData:
                 if num_of_players not in range(2, 5):
                     print("Invalid selection! Number of players must be between 2 to 4 players!")
                 else:
-                    return num_of_players
+                    break
 
-    def increase_number_of_round(self, increase_value=1):
-        self.round_index += increase_value
-
-    @staticmethod
-    def get_users_selection():
-        is_users_selection_valid = False
-        is_users_selection_compliant_with_rules = False
-
-        while True:
-            users_selection = None
-            users_selection = input("Enter a valid number or letter for selected action: ")
-            is_users_selection_valid = check_if_users_selection_is_valid(users_selection)
-            is_users_selection_compliant_with_rules = check_if_compliant_with_rules(users_selection)
-            if not is_users_selection_valid:
-                continue
-            elif is_users_selection_valid:
-                if not is_users_selection_compliant_with_rules:
-                    continue
-                elif is_users_selection_compliant_with_rules:
-                    return users_selection
-                else:
-                    raise Exception
-            else:
-                raise Exception
+        self.num_of_players = num_of_players
 
     def rebuild_deck(self):
         for card in range(len(self.table) - 1):
@@ -88,6 +59,8 @@ class GameData:
 
     def set_up_table(self):
         correct_card_found = False
+
+        self.table = []
 
         while not correct_card_found:
             found_card_index = random.randint(0, len(self.deck) - 1)
@@ -101,7 +74,7 @@ class GameData:
         list_of_players = []
 
         for number in range(self.num_of_players):
-            list_of_players.append(Player(number))
+            list_of_players.append(Player(number + 1))
 
         for player in list_of_players:
             player.draw_initial_hand(self.deck)
@@ -117,9 +90,10 @@ class Player:
         self.skip = 0
 
     def check_if_possible_to_play(self):
+        print("ok")
         if self.is_skip == True:
             print_information_about_being_skipped()
-            self.lower_players_skip()
+            self.change_players_skip()
             return False
         elif self.is_skip == False:
             return True
@@ -130,7 +104,7 @@ class Player:
         users_decision = input(f"Drawn card: {self.hand[-1]}\n"
                                f"put this card on the table? Y/N:").upper()
         if users_decision == "Y":
-            game_data.table.append(self.hand.pop(-1))
+            self.lay_out_card(-1)
         elif users_decision == "N":
             pass
         else:
@@ -144,24 +118,85 @@ class Player:
     def draw_card(self):
         self.hand.append(game_data.deck.pop(random.randint(0, len(game_data.deck) - 1)))
 
-    def lay_out_card(self, cards_index, table):
-        table.append(self.hand.pop(cards_index - 1))
+    def lay_out_card(self, index_of_card):
+        game_data.table.append(self.hand.pop(index_of_card - 1))
 
-    def lower_players_skip(self):
+    @property
+    def length_of_hand(self):
+
+        length_of_hand = len(self.hand)
+
+        return length_of_hand
+
+    @property
+    def enumerated_hand(self):
+        return enumerate(self.hand, start=1)
+
+    def change_players_skip(self):
         if self.skip == 1:
             self.skip -= 1
-            self.remove_players_skip()
+            self.is_skip = False
         elif self.skip > 1:
             self.skip -= 1
         else:
             raise Exception
 
-    def remove_players_skip(self):
-        self.is_skip = False
+
+def check_if_compliant_with_rules(users_selection):
+    return True
+
+
+def check_if_users_selection_is_valid(users_selection):
+    possible_valid_selections = check_possible_valid_selections()
+    if users_selection not in possible_valid_selections:
+        is_players_selection_valid = False
+    else:
+        is_players_selection_valid = True
+
+    return is_players_selection_valid
+
+
+def check_possible_valid_selections():
+    result = []
+
+    for card_index in range(1, current_player.length_of_hand + 1):
+        result.append(f"{card_index}")
+    for selection in static_selections:
+        result.append(selection)
+
+    return result
+
+
+def get_users_selection():
+    while True:
+        users_selection = input("Enter a valid number or letter for selected action: ").upper()
+        is_users_selection_valid = check_if_users_selection_is_valid(users_selection)
+        is_users_selection_compliant_with_rules = check_if_compliant_with_rules(users_selection)
+        if not is_users_selection_valid:
+            print("Invalid input!\n")
+        elif is_users_selection_valid:
+            if not is_users_selection_compliant_with_rules:
+                print("Selected action is not compliant with the game rules!")
+            elif is_users_selection_compliant_with_rules:
+                break
+            else:
+                raise Exception
+        else:
+            raise Exception
+
+    return users_selection
+
+
+def give_player_card():
+    current_player.draw_card()
+
+
+def lay_out_card(index_of_selected_card):
+    game_data.table.append(current_player.hand.pop(index_of_selected_card - 1))
 
 
 def main():
-    launched_type_of_game = launcher.launch()
+    launched_type_of_game = launcher.launch(games_name=GAMES_NAME, saves_path=SAVES_PATH)
     global game_data
 
     if launched_type_of_game == "new":
@@ -171,22 +206,6 @@ def main():
         pass
     else:
         raise LaucherError
-
-
-def check_if_compliant_with_rules(users_selection):
-    return True
-
-
-def check_if_users_selection_is_valid(users_selection):
-    possible_valid_selections = check_possible_valid_selections()
-    if users_selection not in range(1, len(current_player.hand) + 1):
-        print("Invalid selection! Selected number out of range!")
-    else:
-        return True
-
-
-def check_possible_valid_selections():
-    pass
 
 
 def play(users_selection):
@@ -199,14 +218,14 @@ def print_current_game_status():
     print(f"{game_data.table[len(game_data.table) - 1]}\n")
     print("Cards on you hand:")
 
-    for card_index, card in enumerate(current_player.hand, start=1):
+    for card_index, card in current_player.enumerated_hand:
         print(f"{card_index}. {repr(card)}")
 
     print('\nQuit - \"Q\", Draw - \"D\"\n')
 
 
 def print_information_about_being_skipped():
-    pass
+    input("You cannot make a move during this round. Press enter to continue.")
 
 
 def start_game():
@@ -216,19 +235,23 @@ def start_game():
 
 def start_players_move():
     can_play = current_player.check_if_possible_to_play()
+
     if can_play:
         print_current_game_status()
-        users_selection = game_data.get_users_selection()
+        users_selection = get_users_selection()
         try:
             users_selection_int = int(users_selection)
         except ValueError:
-            pass
+            if users_selection in static_selections:
+                static_selections[users_selection]()
+            else:
+                raise Exception
         else:
-            play(users_selection_int)
+            current_player.lay_out_card(users_selection_int)
 
 
 def start_round():
-    game_data.increase_number_of_round()
+    game_data.round_index += 1
 
     global current_player
 
@@ -237,15 +260,14 @@ def start_round():
         start_players_move()
 
 
-def validate_card(player_card):
-    results_of_validation = (player_card.rank == "Queen",
-                             game_data.table[-1].rank == "Queen",
-                             game_data.table[-1].rank == player_card.rank,
-                             game_data.table[-1].suit == player_card.suit,
-                             )
+def quit_program():
+    print(f"\nQuiting {GAMES_NAME}...")
+    sys.exit(0)
 
-    return any(results_of_validation)
 
+static_selections = {"D": give_player_card,
+                     "Q": quit_program,
+                     }
 
 if __name__ == '__main__':
     main()
