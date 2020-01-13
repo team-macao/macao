@@ -138,22 +138,21 @@ class Player:
 
 
 def check_if_compliant_with_rules(players_selection):
-    return True
+    selected_card = game_data.current_player.hand[players_selection]
+    card_on_table = game_data.table[-1]
+
+    return any(
+        (selected_card.rank == "Queen",
+         card_on_table.rank == "Queen",
+         card_on_table.rank == selected_card.rank,
+         card_on_table.suit == selected_card.suit,
+         )
+    )
 
 
 def check_if_not_empty_deck():
     if len(game_data.table) == 0:
         game_data.rebuild_deck()
-
-
-def check_if_users_selection_is_valid(players_selection):
-    possible_valid_selections = check_possible_valid_selections()
-    if players_selection not in possible_valid_selections:
-        is_players_selection_valid = False
-    else:
-        is_players_selection_valid = True
-
-    return is_players_selection_valid
 
 
 def check_if_player_can_play(current_player):
@@ -165,6 +164,16 @@ def check_if_player_can_play(current_player):
         return True
     else:
         raise Exception
+
+
+def check_if_players_selection_is_valid(players_selection):
+    possible_valid_selections = check_possible_valid_selections()
+    if players_selection not in possible_valid_selections:
+        is_players_selection_valid = False
+    else:
+        is_players_selection_valid = True
+
+    return is_players_selection_valid
 
 
 def check_possible_valid_selections():
@@ -185,14 +194,17 @@ def give_card():
 def get_users_selection():
     while True:
         users_selection = input("Enter a valid number or letter for selected action: ").upper()
-        is_users_selection_valid = check_if_users_selection_is_valid(users_selection)
-        is_users_selection_compliant_with_rules = check_if_compliant_with_rules(users_selection)
+        is_users_selection_valid = check_if_players_selection_is_valid(users_selection)
+        if users_selection.isdigit():
+            is_users_selection_compliant_with_rules = check_if_compliant_with_rules(int(users_selection) - 1)
+        else:
+            is_users_selection_compliant_with_rules = True
 
         if not is_users_selection_valid:
-            print("Invalid input!\n")
+            print("\nInvalid input!\n")
         elif is_users_selection_valid:
             if not is_users_selection_compliant_with_rules:
-                print("Selected action is not compliant with the game rules!")
+                print("\nSelected action is not compliant with the game rules!\n")
             elif is_users_selection_compliant_with_rules:
                 break
             else:
