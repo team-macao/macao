@@ -22,8 +22,8 @@ def get_valid_users_selection():
     return valid_users_selection
 
 
-def launch(**kwargs):
-    set_globals(saves_path=kwargs["saves_path"], games_name=kwargs["games_name"])
+def launch(saves_path, games_name="NO GAME NAME GIVEN"):
+    set_globals(games_name, saves_path)
 
     try:
         main()
@@ -58,11 +58,11 @@ def select_valid_menu_option(valid_users_selection):
     menu_options[valid_users_selection]()
 
 
-def set_globals(**kwargs):
+def set_globals(games_name, saves_path):
     global GAMES_NAME, SAVES_PATH
 
-    GAMES_NAME = kwargs["games_name"]
-    SAVES_PATH = kwargs["saves_path"]
+    GAMES_NAME = games_name
+    SAVES_PATH = saves_path
 
 
 def validate_users_selection(users_selection):
@@ -86,6 +86,7 @@ def validate_users_selection(users_selection):
 def quit_launcher():
     print(f"\nQuiting launcher...")
     sys.exit(0)
+
 
 menu_options = {1: continue_last_game,
                 2: new_game,
