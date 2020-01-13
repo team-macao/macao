@@ -8,6 +8,7 @@ from common.errors import *
 GAMES_NAME = "Macao"
 SAVES_PATH = "saved_games/"
 
+
 class GameData:
     def __init__(self, **kwargs):
         try:
@@ -95,17 +96,6 @@ class Player:
         self.is_skip = False
         self.skip = 0
 
-    def check_if_possible_to_play(self):
-        print("ok")
-        if self.is_skip == True:
-            print_information_about_being_skipped()
-            self.change_players_skip()
-            return False
-        elif self.is_skip == False:
-            return True
-        else:
-            raise Exception
-
     def decide_if_to_lay_out_drawn_card(self):
         users_decision = input(f"Drawn card: {self.hand[-1]}\n"
                                f"put this card on the table? Y/N:").upper()
@@ -166,6 +156,17 @@ def check_if_users_selection_is_valid(players_selection):
     return is_players_selection_valid
 
 
+def check_if_player_can_play(current_player):
+    if current_player.is_skip == True:
+        print_information_about_being_skipped()
+        current_player.change_players_skip()
+        return False
+    elif current_player.is_skip == False:
+        return True
+    else:
+        raise Exception
+
+
 def check_possible_valid_selections():
     result = []
 
@@ -176,14 +177,17 @@ def check_possible_valid_selections():
 
     return result
 
+
 def give_card():
     game_data.current_player.draw_card()
+
 
 def get_users_selection():
     while True:
         users_selection = input("Enter a valid number or letter for selected action: ").upper()
         is_users_selection_valid = check_if_users_selection_is_valid(users_selection)
         is_users_selection_compliant_with_rules = check_if_compliant_with_rules(users_selection)
+
         if not is_users_selection_valid:
             print("Invalid input!\n")
         elif is_users_selection_valid:
@@ -197,10 +201,6 @@ def get_users_selection():
             raise Exception
 
     return users_selection
-
-
-def lay_out_card(index_of_selected_card):
-    game_data.table.append(game_data.current_player.hand.pop(index_of_selected_card - 1))
 
 
 def main():
@@ -228,7 +228,7 @@ def print_current_game_status():
 
 
 def print_information_about_being_skipped():
-    input("You cannot make a move during this round. Press enter to continue.")
+    input("You cannot make a move during this round. Press enter to continue:")
 
 
 def set_up_globals(**kwargs):
@@ -239,25 +239,16 @@ def set_up_globals(**kwargs):
 
 def start_game():
     while not game_data.game_ended:
-        start_round()
+        game_data.round_index += 1
 
+        for player in game_data.players:
+            check_if_not_empty_deck()
+            game_data.set_current_player(player)
 
-def start_players_move():
-    can_play = game_data.current_player.check_if_possible_to_play()
-
-    if can_play:
-        print_current_game_status()
-        players_selection = get_users_selection()
-        game_data.current_player.play(players_selection)
-
-
-def start_round():
-    game_data.round_index += 1
-
-    for player in game_data.players:
-        check_if_not_empty_deck()
-        game_data.set_current_player(player)
-        start_players_move()
+            if check_if_player_can_play(player):
+                print_current_game_status()
+                players_selection = get_users_selection()
+                game_data.current_player.play(players_selection)
 
 
 def quit_program():
