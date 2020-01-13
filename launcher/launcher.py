@@ -1,5 +1,7 @@
 import sys
 
+class InternalLaucherError(Exception):
+    pass
 
 def continue_last_game(*args):
     global result
@@ -18,9 +20,13 @@ def get_valid_users_selection():
 
 def launch(**kwargs):
     set_global_variables(**kwargs)
-    main()
 
-    return result
+    try:
+        main()
+    except Exception:
+        raise InternalLaucherError
+    else:
+        return result
 
 
 def main():

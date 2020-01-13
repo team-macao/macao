@@ -8,17 +8,15 @@ from common.errors import *
 GAMES_NAME = "Macao"
 SAVES_PATH = "saved_games/"
 
-
 class GameData:
     def __init__(self, **kwargs):
         try:
-            loaded_game_data = kwargs["loaded_game_data"]
+            self._loaded_game_init(kwargs["loaded_game_data"])
         except KeyError:
             self._new_game_init()
-        else:
-            self._loaded_game_init(loaded_game_data)
 
     def _loaded_game_init(self, loaded_game_data):
+        self.current_player = loaded_game_data["current_player"]
         self.game_ended = loaded_game_data["game_ended"]
         self.deck = loaded_game_data["game_ended"]
         self.num_of_players = loaded_game_data["num_of_players"]
@@ -32,12 +30,19 @@ class GameData:
         self.round_index = 0
 
         self.get_num_of_players()
-        self.set_up_list_of_instances_of_players()
+        self.build_list_of_instances_of_players()
         self.set_up_table()
 
-    def check_if_not_empty_deck(self):
-        if len(self.table) == 0:
-            self.rebuild_deck()
+    def build_list_of_instances_of_players(self):
+        list_of_players = []
+
+        for number in range(self.num_of_players):
+            list_of_players.append(Player(number + 1))
+
+        for player in list_of_players:
+            player.draw_initial_hand(self.deck)
+
+        self.players = list_of_players
 
     def get_num_of_players(self):
         while True:
@@ -70,19 +75,20 @@ class GameData:
             else:
                 pass
 
-    def set_up_list_of_instances_of_players(self):
-        list_of_players = []
-
-        for number in range(self.num_of_players):
-            list_of_players.append(Player(number + 1))
-
-        for player in list_of_players:
-            player.draw_initial_hand(self.deck)
-
-        self.players = list_of_players
+    def set_current_player(self, players_instance):
+        self.current_player = players_instance
 
 
 class Player:
+    def change_players_skip(self):
+        if self.skip == 1:
+            self.skip -= 1
+            self.is_skip = False
+        elif self.skip > 1:
+            self.skip -= 1
+        else:
+            raise Exception
+
     def __init__(self, players_id):
         self.hand = []
         self.players_id = players_id
@@ -118,6 +124,10 @@ class Player:
     def draw_card(self):
         self.hand.append(game_data.deck.pop(random.randint(0, len(game_data.deck) - 1)))
 
+    @property
+    def enumerated_hand(self):
+        return enumerate(self.hand, start=1)
+
     def lay_out_card(self, index_of_card):
         game_data.table.append(self.hand.pop(index_of_card - 1))
 
@@ -128,27 +138,27 @@ class Player:
 
         return length_of_hand
 
-    @property
-    def enumerated_hand(self):
-        return enumerate(self.hand, start=1)
-
-    def change_players_skip(self):
-        if self.skip == 1:
-            self.skip -= 1
-            self.is_skip = False
-        elif self.skip > 1:
-            self.skip -= 1
+    def play(self, players_selection):
+        if players_selection.isdigit():
+            self.lay_out_card(int(players_selection))
+        elif players_selection in static_selections:
+            static_selections[players_selection]()
         else:
             raise Exception
 
 
-def check_if_compliant_with_rules(users_selection):
+def check_if_compliant_with_rules(players_selection):
     return True
 
 
-def check_if_users_selection_is_valid(users_selection):
+def check_if_not_empty_deck():
+    if len(game_data.table) == 0:
+        game_data.rebuild_deck()
+
+
+def check_if_users_selection_is_valid(players_selection):
     possible_valid_selections = check_possible_valid_selections()
-    if users_selection not in possible_valid_selections:
+    if players_selection not in possible_valid_selections:
         is_players_selection_valid = False
     else:
         is_players_selection_valid = True
@@ -159,13 +169,15 @@ def check_if_users_selection_is_valid(users_selection):
 def check_possible_valid_selections():
     result = []
 
-    for card_index in range(1, current_player.length_of_hand + 1):
+    for card_index in range(1, game_data.current_player.length_of_hand + 1):
         result.append(f"{card_index}")
     for selection in static_selections:
         result.append(selection)
 
     return result
 
+def give_card():
+    game_data.current_player.draw_card()
 
 def get_users_selection():
     while True:
@@ -187,38 +199,29 @@ def get_users_selection():
     return users_selection
 
 
-def give_player_card():
-    current_player.draw_card()
-
-
 def lay_out_card(index_of_selected_card):
-    game_data.table.append(current_player.hand.pop(index_of_selected_card - 1))
+    game_data.table.append(game_data.current_player.hand.pop(index_of_selected_card - 1))
 
 
 def main():
-    launched_type_of_game = launcher.launch(games_name=GAMES_NAME, saves_path=SAVES_PATH)
-    global game_data
+    type_of_launched_game = launcher.launch(games_name=GAMES_NAME, saves_path=SAVES_PATH)
 
-    if launched_type_of_game == "new":
-        game_data = GameData()
+    if type_of_launched_game == "new":
+        set_up_globals()
         start_game()
-    elif launched_type_of_game == "continue":
+    elif type_of_launched_game == "continue":
         pass
     else:
         raise LaucherError
 
 
-def play(users_selection):
-    pass
-
-
 def print_current_game_status():
-    print(f"\nRound #{game_data.round_index}: Player #{current_player.players_id}")
+    print(f"\nRound #{game_data.round_index}: Player #{game_data.current_player.players_id}")
     print(f"\nCard on table:")
     print(f"{game_data.table[len(game_data.table) - 1]}\n")
     print("Cards on you hand:")
 
-    for card_index, card in current_player.enumerated_hand:
+    for card_index, card in game_data.current_player.enumerated_hand:
         print(f"{card_index}. {repr(card)}")
 
     print('\nQuit - \"Q\", Draw - \"D\"\n')
@@ -228,35 +231,32 @@ def print_information_about_being_skipped():
     input("You cannot make a move during this round. Press enter to continue.")
 
 
+def set_up_globals(**kwargs):
+    global game_data
+
+    game_data = GameData(**kwargs)
+
+
 def start_game():
     while not game_data.game_ended:
         start_round()
 
 
 def start_players_move():
-    can_play = current_player.check_if_possible_to_play()
+    can_play = game_data.current_player.check_if_possible_to_play()
 
     if can_play:
         print_current_game_status()
-        users_selection = get_users_selection()
-        try:
-            users_selection_int = int(users_selection)
-        except ValueError:
-            if users_selection in static_selections:
-                static_selections[users_selection]()
-            else:
-                raise Exception
-        else:
-            current_player.lay_out_card(users_selection_int)
+        players_selection = get_users_selection()
+        game_data.current_player.play(players_selection)
 
 
 def start_round():
     game_data.round_index += 1
 
-    global current_player
-
-    for current_player in game_data.players:
-        game_data.check_if_not_empty_deck()
+    for player in game_data.players:
+        check_if_not_empty_deck()
+        game_data.set_current_player(player)
         start_players_move()
 
 
@@ -265,7 +265,7 @@ def quit_program():
     sys.exit(0)
 
 
-static_selections = {"D": give_player_card,
+static_selections = {"D": give_card,
                      "Q": quit_program,
                      }
 
