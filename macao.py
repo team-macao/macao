@@ -222,7 +222,8 @@ def main():
         set_up_globals()
         start_game()
     elif type_of_launched_game == "continue":
-        pass
+        print("\nNOT YET IMPLEMENTED")
+        quit_game()
     else:
         raise LaucherError
 
@@ -263,13 +264,13 @@ def start_game():
                 game_data.current_player.play(players_selection)
 
 
-def quit_program():
+def quit_game():
     print(f"\nQuiting {GAMES_NAME}...")
     sys.exit(0)
 
 
 static_selections = {"D": give_card,
-                     "Q": quit_program,
+                     "Q": quit_game,
                      }
 
 if __name__ == '__main__':
