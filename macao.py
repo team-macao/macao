@@ -220,7 +220,7 @@ def get_valid_players_selection():
 
 
 def main():
-    type_of_launched_game = launcher.launch(games_name=GAMES_NAME, saves_path=SAVES_PATH)
+    type_of_launched_game = launcher.launch(saves_path=SAVES_PATH, games_name=GAMES_NAME)
 
     if type_of_launched_game == "new":
         set_up_globals()
