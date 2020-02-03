@@ -192,6 +192,20 @@ def check_possible_valid_selections():
 
 def give_card():
     game_data.current_player.draw_card()
+    print(f"\nThe card you have drawn is:\n{repr(game_data.current_player.hand[-1])}")
+    players_decision = input("Do you want to use this card? Y/N: ").upper()
+    is_players_move_finished = False
+    # while not is_players_selection_valid or not is_players_selection_compliant_with_rules:
+    if players_decision == "N":
+        is_players_move_finished = True
+    elif players_decision == "Y":
+        is_players_selection_compliant_with_rules = check_if_compliant_with_rules(
+            str(len(game_data.current_player.hand)))
+        if is_players_selection_compliant_with_rules:
+            game_data.current_player.play(str(len(game_data.current_player.hand)))
+            is_players_move_finished
+        else:
+            print('Sorry, it is not possible to put the card on the table.')
 
 
 def get_valid_players_selection():
