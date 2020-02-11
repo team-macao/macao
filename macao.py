@@ -95,6 +95,7 @@ class Player:
         self.players_id = players_id
         self.is_skip = False
         self.skip = 0
+        self.said_macao = False
 
     def decide_if_to_lay_out_drawn_card(self):
         users_decision = input(f"Drawn card: {self.hand[-1]}\n"
@@ -255,11 +256,14 @@ def print_current_game_status():
     for card_index, card in game_data.current_player.enumerated_hand:
         print(f"{card_index}. {repr(card)}")
 
-    print('\nQuit - \"Q\", Draw - \"D\"\n')
+    print('\nQuit - \"Q\", Draw - \"D\", Macao - \"M\"\n')
 
 
 def print_information_about_being_skipped():
     input("You cannot make a move during this round. Press enter to continue:")
+
+def say_macao():
+    game_data.current_player.said_macao = True
 
 
 def set_up_globals(**kwargs):
@@ -289,6 +293,7 @@ def quit_game():
 
 static_selections = {"D": give_card,
                      "Q": quit_game,
+                     "M": say_macao,
                      }
 
 if __name__ == '__main__':
